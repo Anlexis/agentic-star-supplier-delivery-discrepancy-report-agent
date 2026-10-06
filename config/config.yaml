@@ -1,0 +1,31 @@
+# Runtime parameters — loaded by AgentRegistry, passed as Graph(config=...).
+# Separate from config/agent.yaml (the static manifest).
+#
+# Every key below has a live reader. The ret_c2_158 block is validated when the
+# graph compiles (a malformed value refuses to start rather than being coerced
+# to a default nobody declared), forwarded to the inner workflow graph, and
+# seeded into state — node execute() methods take no config argument, so state
+# seeding is the only route a runtime value can travel into a domain node.
+
+max_retry: 3
+timeout_s: 30
+
+ret_c2_158:
+  # Where the records come from when the caller supplies none.
+  #   mock   — the built-in sample dataset (three purchase orders, two suppliers)
+  #   caller — refuse a request that carries no records
+  # Records supplied in input_context are always used, whatever this says.
+  data_source: "mock"
+  # Days late that are still counted as on time. Read by the discrepancy step.
+  late_delivery_tolerance_days: 0
+  # Invoice unit-price deviation tolerated before an invoice_mismatch flag is
+  # raised, as a fraction (0.02 = 2%). Read by the discrepancy step.
+  price_tolerance_pct: 0.02
+  # Composite-score weights. All five must be present, each between 0 and 1,
+  # and together sum to 1.0. Read by the metrics step.
+  kpi_weights:
+    otd_pct: 0.25
+    fill_rate: 0.25
+    otif_pct: 0.20
+    defect_pct: 0.15
+    invoice_accuracy_pct: 0.15

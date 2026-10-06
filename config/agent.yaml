@@ -1,0 +1,26 @@
+# Agent Manifest — AgentRegistry entry point
+# AgentRegistry (mediator/registry/agent_registry.py) reads every key below at
+# ROOT level — do NOT nest keys under an `agent:` block.
+id: "RET-C2-158"
+name: "SupplierDeliveryPerformanceReportAgent"
+namespace: "ret"
+version: "0.1.1"
+enabled: true
+category: "Cat 2"
+# The scorecard is computed and rendered deterministically from the validated
+# records. No model is invoked anywhere in the pipeline.
+generation_mode: "deterministic"  # deterministic | llm
+industry: "RET"
+
+base_type: "DocGenerationAgent"
+
+# Entry point — single dotted import path (module.Class), NOT split module:/class:.
+class: "src.graph.graph.RetC2158Agent"
+
+required_trust_level: "VERIFIED_EXTERNAL"
+
+# Compile-time gates — declare every ctx.secrets.require() key + constructed extra.
+# The agent calls no ctx.secrets.require() and constructs no provider client.
+requires:
+  secrets: []
+  extras: []
